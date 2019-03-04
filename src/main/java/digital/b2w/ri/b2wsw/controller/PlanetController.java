@@ -3,10 +3,8 @@ package digital.b2w.ri.b2wsw.controller;
 import digital.b2w.ri.b2wsw.model.Planet;
 import digital.b2w.ri.b2wsw.service.PlanetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,35 +17,44 @@ import java.util.UUID;
 @RequestMapping("planet")
 public class PlanetController {
 
-    @Autowired
     PlanetService planetService;
 
-    @PostConstruct
-    public void salvar() {
-        List<Planet> planets = new ArrayList<>();
-        planets.add(new Planet("Alderaan", "temperate", "grasslands, mountains", 2));
-        planets.add(new Planet("Yavin IV", "temperate, tropical", "jungle, rainforests", 1));
-        planetService.initializePlanets(planets);
+    @Autowired
+    public PlanetController(PlanetService planetService) {
+        this.planetService = planetService;
     }
 
-    @GetMapping("/list")
-    public Flux<Planet> getAllPlanets() {
-        Flux<Planet> planets = planetService.getAllPlanets();
-        return planets;
+    @GetMapping()
+    public Flux<Planet> findAll() {
+        return planetService.findAll();
+    }
+
+    @PostMapping()
+    public void save(@RequestBody @Validated Planet planet) {
+        planet.setId(UUID.randomUUID().toString());
+        planetService.save(planet);
     }
 
     @GetMapping("/{id}")
-    public Mono<Planet> getPlanetById(@PathVariable String id) {
-        return planetService.getPlanetById(id);
+    public Mono<Planet> findById(@PathVariable String id) {
+        return planetService.findById(id);
     }
 
-//    @GetMapping("/filterByAge/{age}")
-//    public Flux<Employee> getEmployeesFilterByAge(@PathVariable int age) {
-//        return employeeService.getEmployeesFilterByAge(age);
-//    }
-
-    @GetMapping("/teste")
-    public String teste() {
-        return "ok";
+    @GetMapping("/byName/{name}")
+    public Flux<Planet> findByName(@PathVariable String name) {
+        return planetService.findByName(name);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        planetService.delete(id);
+    }
+
+    @GetMapping("/swapi")
+    public Flux<List<Planet>> getFromSwApi(Integer number) {
+        return planetService.getPlanetsInSwApi();
+    }
+
+
+
 }
