@@ -1,0 +1,28 @@
+version: '3'
+
+networks:
+  production-network:
+    driver: bridge
+
+services:
+  cassandra:
+    image: cassandra
+    volumes:
+      - "./cassandra-init.sh:/cassandra-init.sh"
+    command: "sh /cassandra-init.sh"
+    container_name: cassandra
+    networks:
+    - production-network
+    ports:
+    - "9042:9042"
+  appjava:
+    build:
+      dockerfile: ./docker/app.dockerfile
+      context: .
+    container_name: appjava
+    networks:
+    - production-network
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "cassandra"
