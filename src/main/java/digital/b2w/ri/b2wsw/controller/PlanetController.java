@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,10 +49,9 @@ public class PlanetController {
     }
 
     @GetMapping("/swapi")
-    public Flux<List<Planet>> getFromSwApi(Integer number) {
+    public Flux<List<Planet>> getFromSwApi() {
         return planetService.getPlanetsInSwApi();
     }
-
 
 
 }

@@ -24,13 +24,8 @@ public class PlanetService {
         this.planetRepository = planetRepository;
     }
 
-    public void initializePlanets(List<Planet> planets) {
-        Flux<Planet> savedPlanetFlux = planetRepository.saveAll(planets);
-        savedPlanetFlux.subscribe();
-    }
-
     public Flux<Planet> findAll() {
-        Flux<Planet> planets =  planetRepository.findAll();
+        Flux<Planet> planets = planetRepository.findAll();
         return planets;
     }
 
@@ -43,13 +38,11 @@ public class PlanetService {
     }
 
     public void save(Planet planet) {
-        Mono<Planet> planetMono = planetRepository.save(planet);
-        planetMono.subscribe();
+        planetRepository.save(planet);
     }
 
     public void delete(String id) {
-        Mono<Void> planetMono = planetRepository.deleteById(id);
-        planetMono.subscribe();
+        planetRepository.deleteById(id);
     }
 
     public Flux<List<Planet>> getPlanetsInSwApi() {
@@ -59,7 +52,7 @@ public class PlanetService {
     }
 
     private void swApiCaller(FluxSink<List<Planet>> fluxSink, String uri) {
-        WebClient client = WebClient.create();
+        WebClient client = getWebClient();
         Mono<ClientResponse> result = client.get().uri(uri)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange();
@@ -72,5 +65,9 @@ public class PlanetService {
         } else {
             fluxSink.complete();
         }
+    }
+
+    protected WebClient getWebClient() {
+        return WebClient.create();
     }
 }

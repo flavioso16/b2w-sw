@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table
